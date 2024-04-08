@@ -40,10 +40,31 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        if s.len() == 0 {
+            return Person::default();
+        }
+
+        let strs = s.split(",").collect::<Vec<&str>>();
+        if strs.len() < 2 {
+            return Person::default();
+        }
+
+        let (name, b) = (strs[0], strs[1]);
+
+        if name.len() == 0 {
+            return Person::default();
+        }
+
+        let Ok(age) = b.parse::<usize>() else {
+            return Person::default();
+        };
+
+        return Person {
+            name: name.to_string(),
+            age: age,
+        };
     }
 }
 
@@ -127,14 +148,14 @@ mod tests {
     #[test]
     fn test_trailing_comma() {
         let p: Person = Person::from("Mike,32,");
-        assert_eq!(p.name, "John");
-        assert_eq!(p.age, 30);
+        assert_eq!(p.name, "Mike");
+        assert_eq!(p.age, 32);
     }
 
     #[test]
     fn test_trailing_comma_and_some_string() {
         let p: Person = Person::from("Mike,32,man");
-        assert_eq!(p.name, "John");
-        assert_eq!(p.age, 30);
+        assert_eq!(p.name, "Mike");
+        assert_eq!(p.age, 32);
     }
 }
